@@ -20,6 +20,7 @@ class GeneralInfoForm(QWidget):
     """General Information form"""
 
     data_changed = pyqtSignal()
+    activity_saved = pyqtSignal(int)  # Signal to broadcast when activity is saved with activity_id
 
     def __init__(self, db_service, activity_id=None):
         super().__init__()
