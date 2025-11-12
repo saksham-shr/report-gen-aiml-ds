@@ -4,7 +4,8 @@ Synopsis Form
 
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTextEdit,
-    QPushButton, QFrame, QGroupBox, QScrollArea, QMessageBox
+    QPushButton, QFrame, QGroupBox, QScrollArea, QMessageBox,
+    QApplication
 )
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QTextCharFormat, QColor
