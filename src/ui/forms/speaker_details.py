@@ -373,7 +373,9 @@ class SpeakerDetailsForm(QWidget):
 
     def set_activity_id(self, activity_id):
         """Set the current activity ID"""
+        print(f"DEBUG: SpeakerDetailsForm.set_activity_id() called with: {activity_id}")  # Debug line
         self.activity_id = activity_id
+        print(f"DEBUG: SpeakerDetailsForm.activity_id is now: {self.activity_id}")  # Debug line
         if activity_id:
             self.load_data()
         else:
