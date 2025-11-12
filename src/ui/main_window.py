@@ -130,8 +130,9 @@ class MainWindow(QMainWindow):
 
     def initialize_forms(self):
         """Initialize all form instances"""
+        self.general_form = GeneralInfoForm(self.db_service, self.current_activity_id)
         self.forms = {
-            0: GeneralInfoForm(self.db_service, self.current_activity_id),
+            0: self.general_form,
             1: SpeakerDetailsForm(self.db_service, self.current_activity_id),
             2: ParticipantsForm(self.db_service, self.current_activity_id),
             3: SynopsisForm(self.db_service, self.current_activity_id),
@@ -140,6 +141,9 @@ class MainWindow(QMainWindow):
             6: ActivityPhotosForm(self.db_service, self.current_activity_id),
             7: GeneratePDFForm(self.db_service, self.current_activity_id)
         }
+
+        # Connect activity_saved signal from general form to broadcast activity_id changes
+        self.general_form.activity_saved.connect(self.broadcast_activity_id)
 
         # Add forms to layout (initially hidden)
         for form in self.forms.values():
