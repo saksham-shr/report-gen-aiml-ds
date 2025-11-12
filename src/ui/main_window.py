@@ -257,15 +257,10 @@ class MainWindow(QMainWindow):
         self.current_activity_id = activity_id
         self.activity_status_label.setText(f"Activity ID: {activity_id}")
 
-        print(f"DEBUG: Broadcasting activity_id={activity_id} to all forms")  # Debug line
-
         # Update all forms with the new activity_id
-        for form_name, form in self.forms.items():
+        for form in self.forms.values():
             if hasattr(form, 'set_activity_id'):
-                print(f"DEBUG: Updating form {form_name} with activity_id={activity_id}")  # Debug line
                 form.set_activity_id(activity_id)
-            else:
-                print(f"DEBUG: Form {form_name} has no set_activity_id method")  # Debug line
 
         self.update_save_status(f"Activity {activity_id} created")
 
