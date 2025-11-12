@@ -239,6 +239,18 @@ class MainWindow(QMainWindow):
         self.show_form(0)
         self.update_save_status("New activity created")
 
+    def broadcast_activity_id(self, activity_id):
+        """Broadcast new activity_id to all forms"""
+        self.current_activity_id = activity_id
+        self.activity_status_label.setText(f"Activity ID: {activity_id}")
+
+        # Update all forms with the new activity_id
+        for form in self.forms.values():
+            if hasattr(form, 'set_activity_id'):
+                form.set_activity_id(activity_id)
+
+        self.update_save_status(f"Activity {activity_id} created")
+
     def closeEvent(self, event):
         """Handle window close event"""
         # Check for unsaved changes
