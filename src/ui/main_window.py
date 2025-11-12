@@ -177,10 +177,15 @@ class MainWindow(QMainWindow):
 
     def show_form(self, index):
         """Show a specific form by index"""
+        print(f"DEBUG: show_form({index}) called, current_form_index: {self.current_form_index}")  # Debug line
+        print(f"DEBUG: current_activity_id: {self.current_activity_id}")  # Debug line
+
         # Check if trying to navigate away from General Info without saving
         if self.current_form_index == 0 and index != 0:
             general_form = self.forms[0]
+            print(f"DEBUG: Checking general_form.activity_id: {general_form.activity_id}")  # Debug line
             if not general_form.activity_id:
+                print("DEBUG: No activity_id - showing warning")  # Debug line
                 # General Info not saved yet - prevent navigation
                 QMessageBox.warning(
                     self, "Please Save General Information",
@@ -199,6 +204,10 @@ class MainWindow(QMainWindow):
             self.current_form = self.forms[index]
             self.current_form.setVisible(True)
             self.current_form_index = index
+
+            # Check if the target form has activity_id
+            if hasattr(self.current_form, 'activity_id'):
+                print(f"DEBUG: Target form {index} has activity_id: {self.current_form.activity_id}")  # Debug line
 
         # Update sidebar selection
         self.sidebar.set_selected_item(index)
