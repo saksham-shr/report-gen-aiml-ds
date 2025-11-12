@@ -177,6 +177,17 @@ class MainWindow(QMainWindow):
 
     def show_form(self, index):
         """Show a specific form by index"""
+        # Auto-save General Info form if user is navigating away from it
+        if self.current_form_index == 0 and index != 0:
+            general_form = self.forms[0]
+            if hasattr(general_form, 'save_data') and not general_form.activity_id:
+                # Try to auto-save general info if it's not saved yet
+                if hasattr(general_form, 'validate_form'):
+                    errors = general_form.validate_form()
+                    if not errors:  # Only auto-save if form is valid
+                        print("DEBUG: Auto-saving General Info form before navigation")  # Debug line
+                        general_form.save_data()
+
         # Hide current form
         if self.current_form:
             self.current_form.setVisible(False)
@@ -186,6 +197,10 @@ class MainWindow(QMainWindow):
             self.current_form = self.forms[index]
             self.current_form.setVisible(True)
             self.current_form_index = index
+
+            # Check if the new form has activity_id when not general form
+            if index != 0 and not self.current_activity_id:
+                print(f"DEBUG: Navigating to form {index} but no activity_id exists")  # Debug line
 
         # Update sidebar selection
         self.sidebar.set_selected_item(index)
