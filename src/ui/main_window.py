@@ -254,14 +254,22 @@ class MainWindow(QMainWindow):
 
     def broadcast_activity_id(self, activity_id):
         """Broadcast new activity_id to all forms"""
+        print(f"DEBUG: broadcast_activity_id called with activity_id: {activity_id}")  # Debug line
         self.current_activity_id = activity_id
         self.activity_status_label.setText(f"Activity ID: {activity_id}")
+        print(f"DEBUG: Set current_activity_id to: {self.current_activity_id}")  # Debug line
 
         # Update all forms with the new activity_id
-        for form in self.forms.values():
+        form_count = 0
+        for form_name, form in self.forms.items():
             if hasattr(form, 'set_activity_id'):
+                print(f"DEBUG: Calling set_activity_id({activity_id}) on form {form_name}")  # Debug line
                 form.set_activity_id(activity_id)
+                form_count += 1
+            else:
+                print(f"DEBUG: Form {form_name} has no set_activity_id method")  # Debug line
 
+        print(f"DEBUG: Updated {form_count} forms with activity_id")  # Debug line
         self.update_save_status(f"Activity {activity_id} created")
 
     def closeEvent(self, event):
