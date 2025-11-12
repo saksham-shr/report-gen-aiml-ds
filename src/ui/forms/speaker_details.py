@@ -334,7 +334,9 @@ class SpeakerDetailsForm(QWidget):
 
     def save_data(self):
         """Save form data to database"""
+        print(f"DEBUG: SpeakerDetailsForm.save_data() called with activity_id={self.activity_id}")  # Debug line
         if not self.activity_id:
+            print("DEBUG: No activity_id - showing warning message")  # Debug line
             QMessageBox.warning(self, "No Activity", "Please save general information first.")
             return False
 
