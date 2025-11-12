@@ -5,7 +5,7 @@ Report Prepared By Form
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QFrame, QFormLayout, QGroupBox, QScrollArea,
-    QMessageBox, QFileDialog, QGridLayout, QSizePolicy
+    QMessageBox, QFileDialog, QGridLayout, QSizePolicy, QFile
 )
 from PyQt5.QtCore import Qt, pyqtSignal, QDir
 from PyQt5.QtGui import QFont, QPixmap
