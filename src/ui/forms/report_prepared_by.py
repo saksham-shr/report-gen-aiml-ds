@@ -5,9 +5,9 @@ Complete Report Prepared By Form
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QFrame, QFormLayout, QGroupBox, QScrollArea,
-    QMessageBox, QFileDialog, QGridLayout, QSizePolicy, QFile
+    QMessageBox, QFileDialog, QGridLayout, QSizePolicy
 )
-from PyQt5.QtCore import Qt, pyqtSignal, QDir
+from PyQt5.QtCore import Qt, pyqtSignal, QDir, QFileInfo
 from PyQt5.QtGui import QFont, QPixmap
 
 from ...utils.constants import TEXT_LIMITS, FILE_SIZE_LIMITS, SECTION_LIMITS
@@ -239,7 +239,8 @@ class ReportPreparerWidget(QWidget):
         if file_path:
             # Validate file size
             try:
-                file_size = len(QFile(file_path).readAll())
+                file_info = QFileInfo(file_path)
+                file_size = file_info.size()
                 if file_size > FILE_SIZE_LIMITS["signature"]:
                     QMessageBox.warning(
                         self, "File Too Large",
@@ -489,7 +490,7 @@ class ReportPreparedByForm(QWidget):
         return preparers
 
     def set_form_data(self, preparers_data):
-        """Set form data fromlist of preparer dictionaries"""
+        """Set form data from list of preparer dictionaries"""
         # Clear existing preparers
         for preparer_widget in self.preparer_widgets[:]:
             self.remove_preparer(preparer_widget)

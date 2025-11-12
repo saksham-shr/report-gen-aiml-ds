@@ -1,208 +1,137 @@
 """
-Database service for managing SQLite database operations
+Constants for the Activity Report Generator
 """
 
-import sqlite3
-import os
-from datetime import datetime
-from typing import List, Optional, Dict, Any
+# Activity types for dropdown
+ACTIVITY_TYPES = [
+    "Seminar",
+    "Workshop",
+    "Conference",
+    "Technical Talk",
+    "Guest Talk",
+    "Industry Visit",
+    "Sports",
+    "Cultural Competition",
+    "Technical fest/ Academic fests",
+    "CAADS",
+    "Research Clubs / or any other Clubs",
+    "Newsletter",
+    "Alumni",
+    "Faculty Development Program",
+    "Quality Improvement Program",
+    "Refresher Course",
+    "MoU",
+    "Outreach Activity",
+    "International Event"
+]
 
-class DatabaseService:
-    def __init__(self, db_path: str = None):
-        if db_path is None:
-            db_path = os.path.join(os.path.dirname(__file__), '../../data/reports.db')
+# Sub categories for dropdown
+SUB_CATEGORIES = [
+    "Competitive Exam",
+    "Career Guidance",
+    "Skill Development",
+    "Communication Skills",
+    "Women Event",
+    "Emerging Trends and Technology",
+    "Life Skills",
+    "Soft Skills/ Skill Development",
+    "Other"
+]
 
-        self.db_path = db_path
-        os.makedirs(os.path.dirname(db_path), exist_ok=True)
+# Participant types
+PARTICIPANT_TYPES = [
+    ("faculty", "Faculty"),
+    ("student", "Student"),
+    ("research_scholar", "Research Scholar")
+]
 
-    def get_connection(self):
-        """Get database connection"""
-        conn = sqlite3.connect(self.db_path)
-        conn.row_factory = sqlite3.Row
-        return conn
+# Photo types
+PHOTO_TYPES = [
+    ("activity", "Activity Photo"),
+    ("speaker", "Speaker Photo"),
+    ("other", "Other")
+]
 
-    def initialize_database(self):
-        """Create all database tables"""
-        with self.get_connection() as conn:
-            # Activities table
-            conn.execute('''
-                CREATE TABLE IF NOT EXISTS activities (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    activity_type VARCHAR(50) NOT NULL,
-                    sub_category VARCHAR(50),
-                    sub_category_other TEXT,
-                    start_date DATE NOT NULL,
-                    end_date DATE,
-                    start_time TIME,
-                    end_time TIME,
-                    venue VARCHAR(200),
-                    collaboration_sponsor TEXT,
-                    highlights TEXT,
-                    key_takeaway TEXT,
-                    summary TEXT,
-                    follow_up_plan TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
+# University header information
+UNIVERSITY_INFO = {
+    "name": "Christ(Deemed to be University)",
+    "school": "School of Engineering and Technology",
+    "department": "Department of AI, ML & Data Science"
+}
 
-            # Speakers table
-            conn.execute('''
-                CREATE TABLE IF NOT EXISTS speakers (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    activity_id INTEGER NOT NULL,
-                    name VARCHAR(100) NOT NULL,
-                    title_position VARCHAR(100),
-                    organization VARCHAR(150),
-                    contact_info VARCHAR(200),
-                    presentation_title VARCHAR(200),
-                    profile_image_path VARCHAR(500),
-                    profile_text TEXT,
-                    FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE CASCADE
-                )
-            ''')
+# File size limits (in bytes)
+FILE_SIZE_LIMITS = {
+    "activity_photo": 5 * 1024 * 1024,  # 5MB
+    "speaker_profile": 5 * 1024 * 1024,  # 5MB
+    "signature": 2 * 1024 * 1024  # 2MB
+}
 
-            # Participants table
-            conn.execute('''
-                CREATE TABLE IF NOT EXISTS participants (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    activity_id INTEGER NOT NULL,
-                    participant_type VARCHAR(20) NOT NULL,
-                    count INTEGER NOT NULL,
-                    FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE CASCADE
-                )
-            ''')
+# Character limits
+TEXT_LIMITS = {
+    "speaker_name": 100,
+    "title_position": 100,
+    "organization": 150,
+    "contact_info": 200,
+    "presentation_title": 200,
+    "venue": 200,
+    "preparer_name": 100,
+    "preparer_designation": 100,
+    "highlights": 2000,
+    "key_takeaway": 2000,
+    "summary": 3000,
+    "follow_up_plan": 2000,
+    "speaker_profile": 1000,
+    "photo_caption": 100
+}
 
-            # Report preparers table
-            conn.execute('''
-                CREATE TABLE IF NOT EXISTS report_preparers (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    activity_id INTEGER NOT NULL,
-                    name VARCHAR(100) NOT NULL,
-                    designation VARCHAR(100),
-                    signature_image_path VARCHAR(500),
-                    FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE CASCADE
-                )
-            ''')
+# Limits for dynamic sections
+SECTION_LIMITS = {
+    "max_speakers": 10,
+    "min_speakers": 1,
+    "max_participants": 10,
+    "min_participants": 1,
+    "max_preparers": 5,
+    "min_preparers": 1,
+    "max_photos": 10,
+    "min_photos": 2
+}
 
-            # Activity photos table
-            conn.execute('''
-                CREATE TABLE IF NOT EXISTS activity_photos (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    activity_id INTEGER NOT NULL,
-                    photo_path VARCHAR(500) NOT NULL,
-                    photo_type VARCHAR(20) DEFAULT 'activity',
-                    caption TEXT,
-                    FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE CASCADE
-                )
-            ''')
+# Sidebar navigation items
+SIDEBAR_ITEMS = [
+    ("📋", "General Information"),
+    ("👤", "Speaker Details"),
+    ("👥", "Participants"),
+    ("📝", "Synopsis"),
+    ("✍️", "Report Prepared By"),
+    ("🔊", "Speaker Profile"),
+    ("📷", "Activity Photos"),
+    ("📄", "Generate PDF")
+]
 
-            conn.commit()
+# Form section order
+FORM_SECTIONS = [
+    "general_info",
+    "speaker_details",
+    "participants",
+    "synopsis",
+    "report_prepared_by",
+    "speaker_profile",
+    "activity_photos",
+    "generate_pdf"
+]
 
-    def save_activity(self, activity_data: Dict[str, Any]) -> int:
-        """Save or update activity data"""
-        with self.get_connection() as conn:
-            if 'id' in activity_data and activity_data['id']:
-                # Update existing activity
-                activity_id = activity_data['id']
-                conn.execute('''
-                    UPDATE activities SET
-                        activity_type=?, sub_category=?, sub_category_other=?,
-                        start_date=?, end_date=?, start_time=?, end_time=?,
-                        venue=?, collaboration_sponsor=?, highlights=?,
-                        key_takeaway=?, summary=?, follow_up_plan=?,
-                        updated_at=?
-                    WHERE id=?
-                ''', (
-                    activity_data.get('activity_type'),
-                    activity_data.get('sub_category'),
-                    activity_data.get('sub_category_other'),
-                    activity_data.get('start_date'),
-                    activity_data.get('end_date'),
-                    activity_data.get('start_time'),
-                    activity_data.get('end_time'),
-                    activity_data.get('venue'),
-                    activity_data.get('collaboration_sponsor'),
-                    activity_data.get('highlights'),
-                    activity_data.get('key_takeaway'),
-                    activity_data.get('summary'),
-                    activity_data.get('follow_up_plan'),
-                    datetime.now(),
-                    activity_id
-                ))
-            else:
-                # Insert new activity
-                cursor = conn.execute('''
-                    INSERT INTO activities (
-                        activity_type, sub_category, sub_category_other,
-                        start_date, end_date, start_time, end_time,
-                        venue, collaboration_sponsor, highlights,
-                        key_takeaway, summary, follow_up_plan
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (
-                    activity_data.get('activity_type'),
-                    activity_data.get('sub_category'),
-                    activity_data.get('sub_category_other'),
-                    activity_data.get('start_date'),
-                    activity_data.get('end_date'),
-                    activity_data.get('start_time'),
-                    activity_data.get('end_time'),
-                    activity_data.get('venue'),
-                    activity_data.get('collaboration_sponsor'),
-                    activity_data.get('highlights'),
-                    activity_data.get('key_takeaway'),
-                    activity_data.get('summary'),
-                    activity_data.get('follow_up_plan')
-                ))
-                activity_id = cursor.lastrowid
-
-            conn.commit()
-            return activity_id
-
-    def get_full_activity_data(self, activity_id: int) -> Optional[Dict[str, Any]]:
-        """Get complete activity data including all related tables"""
-        activity = self.get_activity(activity_id)
-        if not activity:
-            return None
-
-        return {
-            'activity': activity,
-            'speakers': self.get_speakers(activity_id),
-            'participants': self.get_participants(activity_id),
-            'report_preparers': self.get_report_preparers(activity_id),
-            'photos': self.get_activity_photos(activity_id)
-        }
-
-    def get_activity(self, activity_id: int) -> Optional[Dict[str, Any]]:
-        """Get activity data by ID"""
-        with self.get_connection() as conn:
-            cursor = conn.execute('SELECT * FROM activities WHERE id=?', (activity_id,))
-            activity = cursor.fetchone()
-
-            if activity:
-                return dict(activity)
-            return None
-
-    def get_speakers(self, activity_id: int) -> List[Dict[str, Any]]:
-        """Get all speakers for an activity"""
-        with self.get_connection() as conn:
-            cursor = conn.execute('SELECT * FROM speakers WHERE activity_id=?', (activity_id,))
-            return [dict(row) for row in cursor.fetchall()]
-
-    def get_participants(self, activity_id: int) -> List[Dict[str, Any]]:
-        """Get all participants for an activity"""
-        with self.get_connection() as conn:
-            cursor = conn.execute('SELECT * FROM participants WHERE activity_id=?', (activity_id,))
-            return [dict(row) for row in cursor.fetchall()]
-
-    def get_report_preparers(self, activity_id: int) -> List[Dict[str, Any]]:
-        """Get all report preparers for an activity"""
-        with self.get_connection() as conn:
-            cursor = conn.execute('SELECT * FROM report_preparers WHERE activity_id=?', (activity_id,))
-            return [dict(row) for row in cursor.fetchall()]
-
-    def get_activity_photos(self, activity_id: int) -> List[Dict[str, Any]]:
-        """Get all activity photos"""
-        with self.get_connection() as conn:
-            cursor = conn.execute('SELECT * FROM activity_photos WHERE activity_id=?', (activity_id,))
-            return [dict(row) for row in cursor.fetchall()]
+# Validation messages
+VALIDATION_MESSAGES = {
+    "required_field": "This field is required",
+    "invalid_date": "Please enter a valid date",
+    "invalid_time": "Please enter a valid time",
+    "end_before_start": "End date/time cannot be before start date/time",
+    "invalid_email": "Please enter a valid email address",
+    "invalid_phone": "Please enter a valid phone number",
+    "file_too_large": "File size exceeds the maximum limit",
+    "invalid_file_type": "Please upload a valid file type (JPG, PNG)",
+    "min_photos_required": f"Minimum {SECTION_LIMITS['min_photos']} photos required",
+    "at_least_one_speaker": "At least one speaker is required",
+    "at_least_one_participant": "At least one participant type is required",
+    "at_least_one_preparer": "At least one report preparer is required"
+}
