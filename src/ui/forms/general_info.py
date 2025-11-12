@@ -278,6 +278,8 @@ class GeneralInfoForm(QWidget):
 
             if not self.activity_id:
                 self.activity_id = activity_id
+                # Broadcast the new activity ID to all other forms
+                self.activity_saved.emit(self.activity_id)
 
             QMessageBox.information(self, "Success", "General information saved successfully!")
             self.data_changed.emit()
