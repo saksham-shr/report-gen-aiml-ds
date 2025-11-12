@@ -285,11 +285,18 @@ class GeneralInfoForm(QWidget):
 
             # Save to database
             activity_id = self.db_service.save_activity(form_data)
+            print(f"DEBUG: Database returned activity_id: {activity_id}")  # Debug line
+            print(f"DEBUG: Before save - self.activity_id: {self.activity_id}")  # Debug line
 
             if not self.activity_id:
                 self.activity_id = activity_id
+                print(f"DEBUG: Set self.activity_id to: {self.activity_id}")  # Debug line
+                print(f"DEBUG: About to emit activity_saved signal with: {self.activity_id}")  # Debug line
                 # Broadcast the new activity ID to all other forms
                 self.activity_saved.emit(self.activity_id)
+                print(f"DEBUG: activity_saved signal emitted")  # Debug line
+            else:
+                print(f"DEBUG: Activity already existed, not broadcasting new ID")  # Debug line
 
             QMessageBox.information(self, "Success", "General information saved successfully!")
             self.data_changed.emit()
