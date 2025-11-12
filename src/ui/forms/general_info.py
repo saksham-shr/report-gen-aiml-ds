@@ -52,11 +52,21 @@ class GeneralInfoForm(QWidget):
         """)
         form_layout = QVBoxLayout(form_container)
 
-        # Form title
+        # Form title with instruction
+        title_layout = QVBoxLayout()
+
         title_label = QLabel("General Information")
         title_label.setFont(QFont("Arial", 16, QFont.Bold))
-        title_label.setStyleSheet("color: #2c3e50; margin-bottom: 20px;")
-        form_layout.addWidget(title_label)
+        title_label.setStyleSheet("color: #2c3e50; margin-bottom: 10px;")
+        title_layout.addWidget(title_label)
+
+        instruction_label = QLabel("⚠️ Please fill this form and click 'Save Information' before navigating to other sections.")
+        instruction_label.setFont(QFont("Arial", 11))
+        instruction_label.setStyleSheet("color: #e67e22; margin-bottom: 20px; padding: 10px; background-color: #fef9e7; border-radius: 5px; border-left: 4px solid #f39c12;")
+        instruction_label.setWordWrap(True)
+        title_layout.addWidget(instruction_label)
+
+        form_layout.addLayout(title_layout)
 
         # Main form layout
         form_widget = QWidget()
