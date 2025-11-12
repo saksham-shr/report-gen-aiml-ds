@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Report - {{ university_name }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1in;
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
+                font-size: 10pt;
+                font-family: "Times New Roman", serif;
+            }
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 12pt;
+            line-height: 1.2;
+            color: black;
+            background: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* University Header Styles */
+        .university-header {
+            text-align: center;
+            margin-bottom: 30pt;
+        }
+
+        .university-title {
+            font-size: 14pt;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 5pt;
+        }
+
+        .school-department {
+            font-size: 14pt;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 3pt;
+        }
+
+        /* Main Heading */
+        .main-heading {
+            font-size: 16pt;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            text-decoration: underline;
+            margin-bottom: 14pt;
+        }
+
+        /* Section Styles */
+        .section-title {
+            font-size: 14pt;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: underline;
+            margin-bottom: 10pt;
+            text-transform: capitalize;
+        }
+
+        /* Field Styles */
+        .field-label {
+            font-size: 12pt;
+            font-weight: bold;
+            text-align: left;
+            margin-bottom: 6pt;
+        }
+
+        .field-value {
+            font-size: 12pt;
+            text-align: left;
+            margin-bottom: 6pt;
+        }
+
+        /* Paragraph Styles */
+        .paragraph {
+            font-size: 12pt;
+            text-align: justify;
+            line-height: 1.15;
+            margin-bottom: 6pt;
+            text-indent: 0;
+        }
+
+        /* List Styles */
+        .highlight-list {
+            list-style-type: disc;
+            margin-left: 20pt;
+            margin-bottom: 10pt;
+        }
+
+        .highlight-list li {
+            margin-bottom: 4pt;
+            font-size: 12pt;
+        }
+
+        /* Photo Styles */
+        .photo-section {
+            margin-top: 20pt;
+        }
+
+        .photo-gallery {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 15pt;
+        }
+
+        .photo-container {
+            width: 48%;
+            margin-bottom: 20pt;
+            text-align: center;
+        }
+
+        .photo-image {
+            width: 100%;
+            height: auto;
+            max-height: 3in;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .photo-caption {
+            font-size: 10pt;
+            font-style: italic;
+            margin-top: 5pt;
+            color: #666;
+        }
+
+        /* Speaker Profile Styles */
+        .speaker-profile-section {
+            margin-top: 30pt;
+            page-break-inside: avoid;
+        }
+
+        .speaker-profile {
+            margin-bottom: 40pt;
+        }
+
+        .speaker-photo {
+            float: right;
+            width: 1.5in;
+            height: 1.5in;
+            margin-left: 15pt;
+            margin-bottom: 10pt;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* Report Preparer Styles */
+        .preparer-section {
+            margin-top: 20pt;
+        }
+
+        .preparer-item {
+            margin-bottom: 8pt;
+        }
+
+        .preparer-name {
+            font-weight: bold;
+        }
+
+        .preparer-signature {
+            height: 0.5in;
+            margin-top: 5pt;
+        }
+
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .text-justify {
+            text-align: justify;
+        }
+
+        .font-bold {
+            font-weight: bold;
+        }
+
+        .text-uppercase {
+            text-transform: uppercase;
+        }
+
+        .mb-10 {
+            margin-bottom: 10pt;
+        }
+
+        .mb-20 {
+            margin-bottom: 20pt;
+        }
+
+        .mt-20 {
+            margin-top: 20pt;
+        }
+
+        /* Page Break Classes */
+        .page-break {
+            page-break-before: always;
+        }
+
+        .avoid-break {
+            page-break-inside: avoid;
+        }
+
+        /* Watermark for university logo (optional) */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 72pt;
+            opacity: 0.1;
+            color: #3498db;
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Optional Watermark -->
+    {% if options.add_watermark %}
+    <div class="watermark">{{ university_name }}</div>
+    {% endif %}
+
+    <!-- University Header -->
+    <div class="university-header">
+        <div class="university-title">{{ university_name }}</div>
+        <div class="school-department">{{ school_name }}</div>
+        <div class="school-department">{{ department_name }}</div>
+    </div>
+
+    <!-- Main Heading -->
+    <h1 class="main-heading">Activity Report</h1>
+
+    <!-- General Information Section -->
+    <div class="section-title">General Information</div>
+
+    <div class="field-label">Type of Activity:</div>
+    <div class="field-value">{{ activity.activity_type }}</div>
+
+    {% if activity.sub_category and activity.sub_category != 'Other' %}
+    <div class="field-label">Sub Category:</div>
+    <div class="field-value">{{ activity.sub_category }}</div>
+    {% endif %}
+
+    {% if activity.sub_category_other %}
+    <div class="field-label">Sub Category (Other):</div>
+    <div class="field-value">{{ activity.sub_category_other }}</div>
+    {% endif %}
+
+    <div class="field-label">Date{% if activity.end_date and activity.end_date != activity.start_date %}s{% endif %}:</div>
+    <div class="field-value">
+        {% if activity.end_date and activity.end_date != activity.start_date %}
+            {{ activity.start_date|date:"j F Y" }} - {{ activity.end_date|date:"j F Y" }}
+        {% else %}
+            {{ activity.start_date|date:"j F Y" }}
+        {% endif %}
+        {% if activity.start_time and activity.end_time %}
+            ({{ activity.start_time }} - {{ activity.end_time }})
+        {% endif %}
+    </div>
+
+    {% if activity.venue %}
+    <div class="field-label">Venue:</div>
+    <div class="field-value">{{ activity.venue }}</div>
+    {% endif %}
+
+    {% if activity.collaboration_sponsor %}
+    <div class="field-label">Collaboration/Sponsor:</div>
+    <div class="field-value">{{ activity.collaboration_sponsor }}</div>
+    {% endif %}
+
+    <!-- Speakers Section -->
+    {% if speakers %}
+    <div class="section-title mt-20">Speaker Details</div>
+    {% for speaker in speakers %}
+    <div class="mb-10">
+        <div class="field-label">{{ loop.index }}. {{ speaker.name }}</div>
+        {% if speaker.title_position or speaker.organization %}
+        <div class="field-value">
+            {% if speaker.title_position %}{{ speaker.title_position }}{% endif %}
+            {% if speaker.title_position and speaker.organization %}, {% endif %}
+            {% if speaker.organization %}{{ speaker.organization }}{% endif %}
+        </div>
+        {% endif %}
+        {% if speaker.presentation_title %}
+        <div class="field-label">Title of Presentation:</div>
+        <div class="field-value">{{ speaker.presentation_title }}</div>
+        {% endif %}
+        {% if speaker.contact_info %}
+        <div class="field-label">Contact Information:</div>
+        <div class="field-value">{{ speaker.contact_info }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Participants Section -->
+    {% if participants %}
+    <div class="section-title mt-20">Participants Profile</div>
+    {% for participant in participants %}
+    <div class="field-label">{{ participant.display_type }}:</div>
+    <div class="field-value">{{ participant.count }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Synopsis Section -->
+    {% if activity.highlights or activity.key_takeaway or activity.summary or activity.follow_up_plan %}
+    <div class="page-break"></div>
+
+    <div class="section-title">Synopsis of the Activity</div>
+
+    {% if activity.highlights %}
+    <div class="field-label">Highlights of the Activity:</div>
+    <div class="paragraph">{{ activity.highlights|nl2br }}</div>
+    {% endif %}
+
+    {% if activity.key_takeaway %}
+    <div class="field-label">Key Takeaways:</div>
+    <div class="paragraph">{{ activity.key_takeaway|nl2br }}</div>
+    {% endif %}
+
+    {% if activity.summary %}
+    <div class="field-label">Summary of the Activity:</div>
+    <div class="paragraph">{{ activity.summary|nl2br }}</div>
+    {% endif %}
+
+    {% if activity.follow_up_plan %}
+    <div class="field-label">Follow-up Plan:</div>
+    <div class="paragraph">{{ activity.follow_up_plan|nl2br }}</div>
+    {% endif %}
+    {% endif %}
+
+    <!-- Report Prepared By Section -->
+    {% if report_preparers %}
+    <div class="section-title mt-20">Report Prepared By</div>
+    {% for preparer in report_preparers %}
+    <div class="preparer-item">
+        <div class="field-value">
+            <span class="preparer-name">{{ preparer.name }}</span>
+            {% if preparer.designation %}, {{ preparer.designation }}{% endif %}
+        </div>
+        {% if preparer.signature_image_path and options.include_signatures %}
+        <div class="preparer-signature">
+            <img src="{{ preparer.signature_image_path }}" alt="Signature" style="height: 0.4in;">
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Speaker Profiles Section -->
+    {% if options.include_profiles and speakers %}
+    <div class="page-break"></div>
+    <div class="speaker-profile-section">
+        <div class="section-title">Speaker Profiles</div>
+
+        {% for speaker in speakers %}
+        {% if speaker.profile_text or speaker.profile_image_path %}
+        <div class="speaker-profile avoid-break">
+            <h3 style="font-size: 14pt; font-weight: bold; margin-bottom: 10pt;">{{ speaker.name }}</h3>
+
+            {% if speaker.profile_image_path %}
+            <img src="{{ speaker.profile_image_path }}" alt="{{ speaker.name }}" class="speaker-photo">
+            {% endif %}
+
+            {% if speaker.profile_text %}
+            <div class="paragraph">{{ speaker.profile_text|nl2br }}</div>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Activity Photos Section -->
+    {% if options.include_photos and photos %}
+    <div class="page-break"></div>
+    <div class="photo-section">
+        <div class="section-title">Activity Photos</div>
+
+        <div class="photo-gallery">
+            {% for photo in photos %}
+            <div class="photo-container">
+                <img src="{{ photo.photo_path }}" alt="Activity Photo" class="photo-image">
+                {% if photo.caption %}
+                <div class="photo-caption">{{ photo.caption }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</body>
+</html>
